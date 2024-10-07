@@ -1,0 +1,1 @@
+go build -o pdf-optimizer cmd/web/*.go && ./pdf-optimizer
