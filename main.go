@@ -4,7 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/widget"
+	"fyne.io/fyne/v2/layout"
 )
 
 func main() {
@@ -18,9 +18,16 @@ func main() {
 	splitForm := InitSplitForm(myWindow)
 
 	// Combine both forms in a vertical box
-	content := container.NewVBox(optimizeForm, widget.NewSeparator(), splitForm)
+	form1 := container.NewVBox(optimizeForm)
+	form2 := container.NewVBox(layout.NewSpacer(), splitForm)
 
-	myWindow.SetContent(content)
-	myWindow.Resize(fyne.NewSize(1400, 900))
+	tabs := container.NewAppTabs(
+		container.NewTabItem("Optimize a PDF file", container.NewPadded(form1)),
+		container.NewTabItem("Split a PDF file", form2),
+	)
+
+	myWindow.SetContent(tabs)
+
+	myWindow.Resize(fyne.NewSize(1000, 600))
 	myWindow.ShowAndRun()
 }

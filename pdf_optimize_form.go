@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/dialog"
+	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/storage"
 	"fyne.io/fyne/v2/widget"
 	"github.com/pdfcpu/pdfcpu/pkg/api"
@@ -14,15 +15,14 @@ import (
 
 func InitOptimizeForm(myWindow fyne.Window) *widget.Form {
 	// Create the optimization form
-	optimizeLabel := widget.NewLabel("Optimize a PDF file")
 	optimizeFileEntry := widget.NewEntry()
 	optimizeFileEntry.SetPlaceHolder("No file selected")
-	optimizeFileEntry.Resize(fyne.NewSize(300, optimizeFileEntry.MinSize().Height))
 
 	optimizeUploadButton := widget.NewButton("Browse", func() {
 		fileDialog := dialog.NewFileOpen(
 			func(reader fyne.URIReadCloser, err error) {
 				if err != nil {
+					dialog.ShowInformation("Error", "Failed to open file!", myWindow)
 					log.Println("Failed to open file:", err)
 					return
 				}
@@ -35,6 +35,7 @@ func InitOptimizeForm(myWindow fyne.Window) *widget.Form {
 
 		location, err := GetExecutableDirectory()
 		if err != nil {
+			dialog.ShowInformation("Error", "Failed to get executable directory!", myWindow)
 			log.Println("Failed to get executable directory:", err)
 			return
 		}
@@ -45,11 +46,12 @@ func InitOptimizeForm(myWindow fyne.Window) *widget.Form {
 
 	optimizeForm := &widget.Form{
 		Items: []*widget.FormItem{
-			{Text: "PDF File", Widget: container.NewVBox(optimizeLabel, container.NewHBox(optimizeFileEntry, optimizeUploadButton))},
+			{Text: "PDF File", Widget: container.NewVBox(layout.NewSpacer(), optimizeFileEntry, optimizeUploadButton)},
 		},
 		OnSubmit: func() {
 			filePath := optimizeFileEntry.Text
 			if filePath == "" {
+				dialog.ShowInformation("Error", "No file selected!", myWindow)
 				log.Println("No file selected")
 				return
 			}
@@ -59,10 +61,11 @@ func InitOptimizeForm(myWindow fyne.Window) *widget.Form {
 
 			err := api.OptimizeFile(filePath, compressedFilePath, nil)
 			if err != nil {
+				dialog.ShowInformation("Error", "Failed to compress file", myWindow)
 				log.Println("Failed to compress file:", err)
 				return
 			}
-
+			dialog.ShowInformation("Success", "File compressed successfully!", myWindow)
 			log.Println("File compressed successfully:", compressedFilePath)
 		},
 	}

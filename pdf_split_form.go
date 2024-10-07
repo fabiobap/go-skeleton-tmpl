@@ -15,7 +15,6 @@ import (
 )
 
 func InitSplitForm(myWindow fyne.Window) *widget.Form {
-	splitLabel := widget.NewLabel("Split a PDF file")
 	splitFileEntry := widget.NewEntry()
 	splitFileEntry.SetPlaceHolder("No file selected")
 	splitFileEntry.Resize(fyne.NewSize(300, splitFileEntry.MinSize().Height))
@@ -49,7 +48,7 @@ func InitSplitForm(myWindow fyne.Window) *widget.Form {
 
 	splitForm := &widget.Form{
 		Items: []*widget.FormItem{
-			{Text: "PDF File", Widget: container.NewVBox(splitLabel, container.NewHBox(splitFileEntry, splitUploadButton))},
+			{Text: "PDF File", Widget: container.NewVBox(container.NewHBox(splitFileEntry, splitUploadButton))},
 			{Text: "Pages", Widget: pagesEntry},
 		},
 		OnSubmit: func() {
